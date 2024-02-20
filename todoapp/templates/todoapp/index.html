@@ -13,26 +13,26 @@
         <input type="search" placeholder="Search task..." name="q">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
     </form>
-    <ul>
     {% block content %}
     {% for task in page_obj %}
-        <li>
-            {% if task.isDone == 1 %}
-            <strike>{{ task.title }}</strike>
-            {% else %}
-                {{ task.title }}
-            {% endif %}
-            <form action="{% url 'todoapp:edit_task' task.id %}" method="get">
-                <input type="submit" name="edit" value="Edit" class="btn btn-primary">
-            </form>
-            <form action="{% url 'todoapp:delete_task' task.id %}" method="post">
-                {% csrf_token %}
-                <input type="submit" name="delete" value="Delete" class="btn btn-primary">
-            </form>
-        </li>
+        <ul>
+            <li>
+                {% if task.isDone == 1 %}
+                <strike>{{ task.title }}</strike>
+                {% else %}
+                    {{ task.title }}
+                {% endif %}
+                <form action="{% url 'todoapp:edit_task' task.id %}" method="get">
+                    <input type="submit" name="edit" value="Edit" class="btn btn-primary">
+                </form>
+                <form action="{% url 'todoapp:delete_task' task.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" name="delete" value="Delete" class="btn btn-primary">
+                </form>
+            </li>
+        </ul>
     {% endfor %}
     {% endblock %}
-    </ul>
     {% load pagination_tags %}
     <div class="paginator">
         <span class="step-links">
