@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add task</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'todoapp/add_task.css' %}">
+</head>
+<body>
+{% include 'todoapp/includes/header.html' %}
+<form action="" method="POST">
+    {% csrf_token %}
+        {{ form}}
+        <br>
+        <input type="submit" value="Add task">
+</form>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit task</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'todoapp/edit_task.css' %}">
+</head>
+<body>
+{% include 'todoapp/includes/header.html' %}
+    {% if task %}
+        <form action="{% url 'todoapp:edit_task' task.id %}" method="POST">
+            {% csrf_token %}
+            <p>Task title is: {{ task.title }}</p>
+            <label>Write new title: <input name="title"></label>
+            <p>Task description is: {{ task.description }}</p>
+            <label>Write new description: <input name="description"></label>
+            <p>Task is done?: {{ task.isDone }}</p>
+            <label>Done: <input type="checkbox" name="isDone"></label>
+            <p>Task date is: {{ task.date }}</p>
+            <label>Write new date(YYYY-MM-DD HH:MM): <input name="date"></label>
+            <input type="submit">
+        </form>
+    {% endif %}
+</body>
+</html>

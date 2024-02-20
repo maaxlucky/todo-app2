@@ -1,0 +1,56 @@
+{#{% extends 'todoapp/index.html' %}#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TodoApp</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'todoapp/style.css' %}">
+</head>
+<body>
+    {% include 'todoapp/includes/header.html' %}
+    <h2>List of your todo tasks:</h2>
+    <form action="{% url 'todoapp:search_task' %}" method="get">
+        <input type="search" placeholder="Search task..." name="q">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </form>
+    <ul>
+{#{% block content %}#}
+    {% for task in page_search %}
+        <li>
+            {% if task.isDone == 1 %}
+                <strike>{{ task.title }}</strike>
+            {% else %}
+                {{ task.title }}
+            {% endif %}
+            <form action="{% url 'todoapp:edit_task' task.id %}" method="get">
+                <input type="submit" name="edit" value="Edit" class="btn btn-primary">
+            </form>
+            <form action="{% url 'todoapp:delete_task' task.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" name="delete" value="Delete" class="btn btn-primary">
+            </form>
+        </li>
+    {% endfor %}
+    {% load pagination_tags %}
+        <div class="paginator">
+        <span class="step-links">
+            {% if page_search.has_previous %}
+                <a href="?{% url_replace request 'page' 1 %}">&laquo;</a>
+                <a href="?page={{ page_search.previous_page_number}}&q={{ q|urlencode }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_search.number }} of {{ page_search.paginator.num_pages }}.
+            </span>
+
+            {% if page_search.has_next %}
+                <a href="?page={{ page_search.next_page_number}}&q={{ q|urlencode }}">next</a>
+                <a href="?page={{ page_search.paginator.num_pages }}">&raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+</body>
+</html>
+{#{% endblock %}#}
