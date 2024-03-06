@@ -11,20 +11,23 @@ from .models import Task
 from .forms import TaskForm, LoginUserForm, RegisterUserForm
 
 
+# What happends when user passes -1 OR 9999999999999999 instead of page number
+# TODO: read about "early return"
 def index(request):
     user = request.user
-    if user in User.objects.all():
-        tasks = user.task_set.all().order_by('id')
-        paginator = Paginator(tasks, 3)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context = {
-            'user': user,
-            'page_obj': page_obj,
-        }
-        return render(request, 'todoapp/index.html', context)
-    else:
+    if user not in User.objects.all():
         return render(request, 'todoapp/index.html')
+
+    tasks = user.task_set.all().order_by('id')
+    paginator = Paginator(tasks, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'user': user,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'todoapp/index.html', context)
 
 @login_required
 def search_task(request):
@@ -42,13 +45,22 @@ def search_task(request):
     return render(request, 'todoapp/search_task.html', context)
 
 
+# REST style
+# GET /tasks/add (render form)
+# POST /tasks (handle form)
+# GET /tasks/{taskId}/form (render editing form)
+# PUT /tasks/{taskId} (handle task edit)
+# DELETE /tasks/{taskId} (handle task deletion)
+
 @login_required
 def add_task(request):
     if request.method == 'POST':
-        user_id = request.POST['user']
-        title = request.POST['title']
+
+        user_id = request.POST['user'] # Insecure because client can prentent to be another user (neven trust the client)
+        title = request.POST['title'] # What happends if user sends 50MB of text in title? If title > 50 symbols return http 400
+
         description = request.POST['description']
-        date = request.POST['date']
+        date = request.POST['due_date'] # check if past date is not accepted
         user = User.objects.get(pk=user_id)
         user.task_set.create(title=title, description=description, date=date)
         return redirect('todoapp:index')
@@ -57,6 +69,7 @@ def add_task(request):
         return render(request, 'todoapp/add_task.html', {'form': form})
 
 
+# Prerender fields in form so that you don't have to check if it has been modified
 @login_required
 def edit_task(request, task_id):
     if request.method == 'POST':
@@ -86,7 +99,7 @@ def edit_task(request, task_id):
 
 @login_required
 def delete_task(request, task_id):
-    if request.method == 'POST':
+    if request.method == 'POST': # DELETE http method for delete
         Task.objects.get(pk=task_id).delete()
         return redirect('todoapp:index')
     else:

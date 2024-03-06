@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# TODO: read about HTTP (spec?)
+# TODO: read about REST (Representation State Transfer)
 app_name = 'todoapp'
 urlpatterns = [
     path('', views.index, name='index'),

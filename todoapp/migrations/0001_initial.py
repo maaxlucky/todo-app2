@@ -15,9 +15,9 @@ class Migration(migrations.Migration):
             name='Task',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=50)),
+                ('title', models.CharField(max_length=50)), # TODO: read CHAR vs TEXT vs VARCHAR in PostreSQL
                 ('description', models.TextField()),
-                ('date', models.DateTimeField(verbose_name='date publised')),
+                ('date', models.DateTimeField(verbose_name='date publised')), # TODO: read TIMESTAMP vs DATETIME
             ],
         ),
     ]
